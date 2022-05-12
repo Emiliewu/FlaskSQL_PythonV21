@@ -1,6 +1,6 @@
 # import the function that will return an instance of a connection
 from flask_app.config.mysqlconnection import connectToMySQL
-
+from flask import flash
 
 # model the class after the friend table from our database
 class Ninja:
@@ -30,3 +30,22 @@ class Ninja:
     def save(cls, data):
         query = "INSERT INTO ninjas ( first_name, last_name, age, dojos_id, created_at, updated_at ) VALUES ( %(first_name)s , %(last_name)s , %(age)s , %(dojos_id)s, NOW() , NOW() );"
         return connectToMySQL('dn_mn_flask_schema').query_db(query, data)
+
+    # Form Validation
+    @staticmethod
+    def validate_ninja(ninja):
+        is_valid = True # we assume this is true
+        # age = int(ninja['age'])
+        if len(ninja['first_name']) < 3:
+            flash("First Name must be at least 3 characters.")
+            is_valid = False
+        if len(ninja['last_name']) < 3:
+            flash("Last Name must be at least 3 characters.")
+            is_valid = False
+        if len(ninja['age']) < 1:
+            flash("Age must be not be empty.")
+            is_valid = False
+        elif int(ninja['age']) < 18:
+            flash("Age must be over 18.")
+            is_valid = False
+        return is_valid

@@ -1,6 +1,5 @@
 
-from contextlib import nullcontext
-import re
+from flask import flash
 from flask_app import app
 from flask import render_template,redirect,request,session,get_flashed_messages
 from flask_app.models.dojo import Dojo
@@ -11,7 +10,6 @@ from flask_app.models.registration import Registration
 @app.route("/dojo")
 @app.route("/")
 def index():
-    
     # call the get all classmethod to get dojos
     dojos = Dojo.get_all()
     print(dojos)
@@ -20,6 +18,10 @@ def index():
 # create new dojo
 @app.route("/dojo/new", methods=['POST'])
 def createdojo():
+    # validate the form data
+    if not Dojo.validate_dojo(request.form):
+        # redirect to the route where the dojo form is rendered.
+        return redirect("/dojo")
     data = {
         'name': request.form['name']
     }
@@ -34,6 +36,10 @@ def newninja():
 
 @app.route("/ninja/new", methods=['POST'])
 def createninja():
+    # validate the form data
+    if not Ninja.validate_ninja(request.form):
+        # redirect to the route where the ninja form is rendered.
+        return redirect("/ninja")
     data = {
         'first_name': request.form['first_name'],
         'last_name': request.form['last_name'],
@@ -60,6 +66,9 @@ def newcourse():
 
 @app.route("/course/new", methods=['POST'])
 def createcourse():
+    if not Course.validate_course(request.form):
+        # redirect to the route where the course form is rendered.
+        return redirect("/course")
     data = {
         'name': request.form['name'],
     }
@@ -68,8 +77,7 @@ def createcourse():
 
 @app.route("/register")
 def newregister():
-    if not session.get("error"):
-        session['error'] = " "
+    
     courses = Course.get_all()
     ninjas = Ninja.get_all()
     print(ninjas)
@@ -89,10 +97,8 @@ def registercourse():
     if course != "not found":
         for ninja in course.ninjas:
             if ninja.id == int(request.form['ninja']):
-                session['error'] = "ninja already registered"
+                flash("ninja already registered")
                 return redirect('/register')
-            else:
-                session.clear()
     Registration.register_ninja_to_course(data)
     return redirect('/register')
 

@@ -2,6 +2,7 @@
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask_app.models import ninja
 from pprint import pprint
+from flask import flash
 # dojo model
 class Dojo:
     def __init__( self, data ):
@@ -38,7 +39,8 @@ class Dojo:
         if len(results) < 1:
             return False
         return cls(results[0])
-
+    
+    # find one dojo with all ninjas in it
     @classmethod
     def get_dojo_with_ninjas( cls , data ):
         query = "SELECT * FROM dojos LEFT JOIN ninjas ON ninjas.dojos_id = dojos.id WHERE dojos.id = %(id)s;"
@@ -63,3 +65,12 @@ class Dojo:
                 }
                 dojo.ninjas.append( ninja.Ninja( ninja_data ) )
             return dojo   
+        
+    # Form Validation
+    @staticmethod
+    def validate_dojo(dojo):
+        is_valid = True # we assume this is true
+        if len(dojo['name']) < 3:
+            flash("Name must be at least 3 characters.")
+            is_valid = False
+        return is_valid

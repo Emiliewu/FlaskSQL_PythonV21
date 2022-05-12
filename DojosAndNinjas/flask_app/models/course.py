@@ -1,5 +1,6 @@
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask_app.models import ninja
+from flask import flash
 
 class Course:
     def __init__( self, data ):
@@ -50,5 +51,12 @@ class Course:
             course.ninjas.append( ninja.Ninja( ninja_data ) )
         return course
 
-    
+       # Form Validation
+    @staticmethod
+    def validate_course(course):
+        is_valid = True # we assume this is true
+        if len(course['name']) < 3:
+            flash("Course Name must be at least 3 characters.")
+            is_valid = False
+        return is_valid
 

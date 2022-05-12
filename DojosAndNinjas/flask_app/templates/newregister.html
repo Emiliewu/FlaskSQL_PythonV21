@@ -15,28 +15,39 @@
             <a class="mt-lg-4" href="/ninja">Create a New Ninja</a>
         </div>
         <div class="col-md-8 d-flex justify-content-around">
-            <form action="/register/new" method="POST" class="m-3">
-                <div class="mb-3">
-                    {{session['error']}}
-                    <label for="course" class="form-label">Course</label>
-                    <select name="course" id="course">
-                        {%for course in courses%}
-                        <option value={{course.id}}>{{course.name}}</option>
-                        {%endfor%}
-                    </select>
-
+            <div>
+                <div>
+                    {% with messages = get_flashed_messages() %}     <!-- declare a variable called messages -->
+                        {% if messages %}                            <!-- check if there are any messages -->
+                            {% for message in messages %}            <!-- loop through the messages -->
+                                <p>{{message}}</p>                   <!-- display each message in a paragraph tag -->
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
                 </div>
-                <div class="mb-3">
-                    <label for="ninja" class="form-label">Ninjas</label>
-                    <select name="ninja" id="ninja">
-                        {%for ninja in ninjas%}
-                        <option value={{ninja.id}}>{{ninja.first_name}} {{ninja.last_name}}</option>
-                        {%endfor%}
-                    </select>
-
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+                <form action="/register/new" method="POST" class="m-3">
+                    <div class="mb-3">
+                        
+                        <label for="course" class="form-label">Course</label>
+                        <select name="course" id="course">
+                            {%for course in courses%}
+                            <option value={{course.id}}>{{course.name}}</option>
+                            {%endfor%}
+                        </select>
+    
+                    </div>
+                    <div class="mb-3">
+                        <label for="ninja" class="form-label">Ninjas</label>
+                        <select name="ninja" id="ninja">
+                            {%for ninja in ninjas%}
+                            <option value={{ninja.id}}>{{ninja.first_name}} {{ninja.last_name}}</option>
+                            {%endfor%}
+                        </select>
+    
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
             <table class="table mt-lg-3 table-striped m-3">
                 <thead>
                     <th>ID</th>
